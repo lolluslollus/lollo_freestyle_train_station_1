@@ -1,0 +1,67 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 6.5783, 4.16086, 6.20303, },
+			bbMin = { 1.52659, -4.1532, 0.75301, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 2.52586, 4.15703, 2.72501, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", },
+							mesh = "msh/rail_t_liquids_end_lod0.msh",
+							name = "rail_t_liquids_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 158.84,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", },
+							mesh = "msh/rail_t_liquids_end_lod1.msh",
+							name = "rail_t_liquids_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 158.84,
+				visibleTo = 476.519,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_end_lod2.msh",
+							name = "rail_t_liquids_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 476.519,
+				visibleTo = 1429.56,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

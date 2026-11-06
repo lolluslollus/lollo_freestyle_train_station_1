@@ -1,0 +1,73 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 33.3615, 4.4, 14.5264, },
+			bbMin = { 6.63847, -4.6, 1.1, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 13.3615, 4.5, 6.7132, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_bulk_markings_lod0.msh",
+							name = "rail_t_bulk_markings",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_unique.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_barrel.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_main_lod0.msh",
+							name = "rail_t_bulk_main",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 410.321,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_unique.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_barrel.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_main_lod1.msh",
+							name = "rail_t_bulk_main",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 410.321,
+				visibleTo = 1230.96,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_unique.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_barrel.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_main_lod2.msh",
+							name = "rail_t_bulk_main",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 1230.96,
+				visibleTo = 2500,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

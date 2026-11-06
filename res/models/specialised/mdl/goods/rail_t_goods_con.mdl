@@ -1,0 +1,160 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 20.02, 5.13696, 8.45, },
+			bbMin = { -20.28, -5.13696, 1.09041, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 20.15, 5.13696, 3.67979, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_goods_con_markings_lod0.msh",
+							name = "rail_t_goods_con_markings",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							children = {
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass1_lod0.msh",
+									name = "rail_t_goods_con_glass1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass2_lod0.msh",
+									name = "rail_t_goods_con_glass2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 11.55, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass3_lod0.msh",
+									name = "rail_t_goods_con_glass3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, -1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass4_lod0.msh",
+									name = "rail_t_goods_con_glass4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 11.55, -1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass5_lod0.msh",
+									name = "rail_t_goods_con_glass5",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -17, -1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass6_lod0.msh",
+									name = "rail_t_goods_con_glass6",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -17, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass7_lod0.msh",
+									name = "rail_t_goods_con_glass7",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -11.55, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_con_glass8_lod0.msh",
+									name = "rail_t_goods_con_glass8",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -11.55, -1.95, 6.445, 1, },
+								},
+							},
+							name = "rail_t_goods_con_glass_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_con_lod0.msh",
+							name = "rail_t_goods_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 412.052,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass_lod.mtl", },
+							mesh = "msh/rail_t_goods_con_glass1_lod1.msh",
+							name = "rail_t_goods_con_glass1",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, 1.95, 6.445, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_con_lod1.msh",
+							name = "rail_t_goods_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 412.052,
+				visibleTo = 1236.16,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_con_lod2.msh",
+							name = "rail_t_goods_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 1236.16,
+				visibleTo = 2500,
+			},
+		},
+		metadata = { 
+			lightSourceList = { 
+				lights = {
+					{ 
+						angleMax = 70,
+						angleMin = 30,
+						color = { 1, 0.737222, 0.266667, },
+						fadeOutStart = 2000,
+						fromTime = 20,
+						height = 2,
+						invertMask = true,
+						length = 21,
+						lightId = "",
+						mask = 0,
+						meshId = "",
+						mode = "LIGHT",
+						radius = 12,
+						strength = 1,
+						toTime = 6,
+						transf = { 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 5, 1, },
+						type = "CHEAP_CYLINDRICAL",
+						visibleFrom = -1,
+						visibleTo = 2500,
+						width = 20,
+					},
+				},
+			},
+		},
+		version = 2,
+	}
+end

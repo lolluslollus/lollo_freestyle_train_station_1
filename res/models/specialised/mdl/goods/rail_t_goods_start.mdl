@@ -1,0 +1,103 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 38.7, 5.12423, 7.24013, },
+			bbMin = { 19.72, -5.12423, -1.7, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 9.49001, 5.12423, 4.47006, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_goods_start_markings_lod0.msh",
+							name = "rail_t_goods_start_markings",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							children = {
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_start_glass_1_lod0.msh",
+									name = "rail_t_goods_start_glass_1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 20.15, 1, 6.6077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_start_glass_2_lod0.msh",
+									name = "rail_t_goods_start_glass_2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 20.15, -1, 6.6077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_start_glass_3_lod0.msh",
+									name = "rail_t_goods_start_glass_3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 37.94, 7.15256e-05, 2.43, 1, },
+								},
+							},
+							name = "rail_t_goods_start_glass_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_plarform.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_start_lod0.msh",
+							name = "rail_t_goods_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 308.653,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass_lod.mtl", },
+							mesh = "msh/rail_t_goods_glass_lod1.msh",
+							name = "rail_t_goods_glass",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_plarform.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_start_lod1.msh",
+							name = "rail_t_goods_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 308.653,
+				visibleTo = 925.958,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_plarform.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall03.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_wall02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_start_lod2.msh",
+							name = "rail_t_goods_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 925.958,
+				visibleTo = 2777.87,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

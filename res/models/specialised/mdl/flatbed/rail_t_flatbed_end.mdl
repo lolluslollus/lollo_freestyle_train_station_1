@@ -1,0 +1,433 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 19.9946, 2.8755, 11.9507, },
+			bbMin = { 1.4245, -3.08172, 1.02053, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 9.28505, 2.97861, 5.46506, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_flatbed_markings_end_lod0.msh",
+							name = "rail_t_flatbed_markings_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							children = {
+								{ 
+									children = {
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass10_lod0.msh",
+											name = "glass10",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.33575, -1.46747, 9.94793, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass2_lod0.msh",
+											name = "glass2",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.737416, -1.73031, 9.05913, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass3_lod0.msh",
+											name = "glass3",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.06401, -2.07452, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass4_lod0.msh",
+											name = "glass4",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.66145, -2.05438, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass5_lod0.msh",
+											name = "glass5",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.39021, -2.07452, 8.14503, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass6_lod0.msh",
+											name = "glass6",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.39021, -2.07452, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass7_lod0.msh",
+											name = "glass7",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.58831, -1.46715, 8.10883, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass8_lod0.msh",
+											name = "glass8",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.84242, -1.46697, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass9_lod0.msh",
+											name = "glass9",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.43045, -0.866417, 9.36709, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass11_lod0.msh",
+											name = "glass11",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.30721, -0.866417, 9.29198, 1, },
+										},
+									},
+									name = "rail_t_flatbed_crane_glass_grp",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_body_lod0.msh",
+									name = "rail_t_flatbed_crane_body",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.00722313, -3.65718e-07, 8.36664, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_lod0.msh",
+									name = "rail_t_flatbed_crane_arm",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.18592, 0.511963, 7.80564, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g1_lod0.msh",
+									name = "rail_t_flatbed_crane_arm_g1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5.46496, -0.000216467, 10.9312, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_body_g1_lod0.msh",
+									name = "rail_t_flatbed_crane_body_g1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0527363, -4.28708e-07, 9.8077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_cables_lod0.msh",
+									name = "rail_t_flatbed_crane_cables",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3.67611, -0.00176668, 10.4294, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_hook_1_lod0.msh",
+									name = "rail_t_flatbed_crane_hook_1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.10276, 0.00108915, 10.0757, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_hook_2_lod0.msh",
+									name = "rail_t_flatbed_crane_hook_2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.85208, 0.000819601, 10.8644, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w1_lod0.msh",
+									name = "rail_t_flatbed_crane_w1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.73654, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g2_lod0.msh",
+									name = "rail_t_flatbed_crane_arm_g2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.92185, 0.000445703, 11.3269, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g3_lod0.msh",
+									name = "rail_t_flatbed_crane_arm_g3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.31687, 0.00071689, 11.1937, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g4_lod0.msh",
+									name = "rail_t_flatbed_crane_arm_g4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6.81881, 0.000716805, 11.1569, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_base_lod0.msh",
+									name = "rail_t_flatbed_crane_base",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0740499, -0.000253722, 4.17656, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w2_lod0.msh",
+									name = "rail_t_flatbed_crane_w2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.53643, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w3_lod0.msh",
+									name = "rail_t_flatbed_crane_w3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.53776, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w4_lod0.msh",
+									name = "rail_t_flatbed_crane_w4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.73787, -0.000253677, 1.298, 1, },
+								},
+							},
+							name = "rail_t_flatbed_crane_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.1, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_end_lft_lod0.msh",
+							name = "rail_t_flatbed_rail_end_lft",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 275,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							children = {
+								{ 
+									children = {
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass10_lod1.msh",
+											name = "glass10",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.33575, -1.46747, 9.94793, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass2_lod1.msh",
+											name = "glass2",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.737416, -1.73031, 9.05913, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass3_lod1.msh",
+											name = "glass3",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.06401, -2.07452, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass4_lod1.msh",
+											name = "glass4",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.66145, -2.05438, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass5_lod1.msh",
+											name = "glass5",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.39021, -2.07452, 8.14503, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass6_lod1.msh",
+											name = "glass6",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.39021, -2.07452, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass7_lod1.msh",
+											name = "glass7",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.58831, -1.46715, 8.10883, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass8_lod1.msh",
+											name = "glass8",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.84242, -1.46697, 9.29198, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass9_lod1.msh",
+											name = "glass9",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.43045, -0.866417, 9.36709, 1, },
+										},
+										{ 
+											materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane_glass.mtl", },
+											mesh = "msh/glass11_lod1.msh",
+											name = "glass11",
+											transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.30721, -0.866417, 9.29198, 1, },
+										},
+									},
+									name = "rail_t_flatbed_crane_glass_grp",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_body_lod1.msh",
+									name = "rail_t_flatbed_crane_body",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.00722313, -3.65718e-07, 8.36664, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_lod1.msh",
+									name = "rail_t_flatbed_crane_arm",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.18592, 0.511963, 7.80564, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g1_lod1.msh",
+									name = "rail_t_flatbed_crane_arm_g1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5.46496, -0.000216467, 10.9312, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_body_g1_lod1.msh",
+									name = "rail_t_flatbed_crane_body_g1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0527363, -4.28708e-07, 9.8077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_cables_lod1.msh",
+									name = "rail_t_flatbed_crane_cables",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3.67611, -0.00176668, 10.4294, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_hook_1_lod1.msh",
+									name = "rail_t_flatbed_crane_hook_1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.10276, 0.00108915, 10.0757, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_hook_2_lod1.msh",
+									name = "rail_t_flatbed_crane_hook_2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.85208, 0.000819601, 10.8644, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w1_lod1.msh",
+									name = "rail_t_flatbed_crane_w1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.73654, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g2_lod1.msh",
+									name = "rail_t_flatbed_crane_arm_g2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.92185, 0.000445703, 11.3269, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g3_lod1.msh",
+									name = "rail_t_flatbed_crane_arm_g3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.31687, 0.00071689, 11.1937, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_arm_g4_lod1.msh",
+									name = "rail_t_flatbed_crane_arm_g4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6.81881, 0.000716805, 11.1569, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_base_lod1.msh",
+									name = "rail_t_flatbed_crane_base",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0740499, -0.000253722, 4.17656, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w2_lod1.msh",
+									name = "rail_t_flatbed_crane_w2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.53643, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w3_lod1.msh",
+									name = "rail_t_flatbed_crane_w3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.53776, -0.000253677, 1.298, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_w4_lod1.msh",
+									name = "rail_t_flatbed_crane_w4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.73787, -0.000253677, 1.298, 1, },
+								},
+							},
+							name = "rail_t_flatbed_crane_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.1, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_end_lft_lod1.msh",
+							name = "rail_t_flatbed_rail_end_lft",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 275,
+				visibleTo = 951.969,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							children = {
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+									mesh = "msh/rail_t_flatbed_crane_base_lod2.msh",
+									name = "rail_t_flatbed_crane_base",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0740499, -0.000253722, 4.17656, 1, },
+								},
+							},
+							name = "rail_t_flatbed_crane_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 7.1, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_end_lft_lod2.msh",
+							name = "rail_t_flatbed_rail_end_lft",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 951.969,
+				visibleTo = 2855.91,
+			},
+		},
+		metadata = { 
+			lightSourceList = { 
+				lights = {
+					{ 
+						angleMax = 86.35,
+						angleMin = 9.1,
+						color = { 0.129412, 0.118254, 0.0984544, },
+						fromTime = 20,
+						invertMask = true,
+						length = 3.3,
+						lightId = "",
+						mask = 0,
+						meshId = "",
+						mode = "LIGHT",
+						radius = 6,
+						strength = 5.2,
+						toTime = 6,
+						transf = { 0, 0.999999, 0, 0, -0.277816, 0, -0.960628, 0, -0.960632, 0, 0.277817, 0, 10, 0, 11.76, 1, },
+						type = "CHEAP_CYLINDRICAL",
+						visibleFrom = -1,
+						visibleTo = -1,
+					},
+				},
+			},
+		},
+		version = 2,
+	}
+end

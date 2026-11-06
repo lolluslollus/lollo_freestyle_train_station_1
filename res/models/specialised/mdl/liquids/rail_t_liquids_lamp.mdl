@@ -1,0 +1,83 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 1.57086, 0.309, 7.80842, },
+			bbMin = { -1.57086, -0.309, -5.06639e-07, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 1.57086, 0.309, 3.90421, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_lamp_lod0.msh",
+							name = "rail_t_liquids_lamp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 102.738,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_lamp_lod1.msh",
+							name = "rail_t_liquids_lamp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 102.738,
+				visibleTo = 308.215,
+			},
+			{ 
+				node = { 
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 308.215,
+				visibleTo = 2000,
+			},
+		},
+		metadata = { 
+			lightSourceList = { 
+				lights = {
+					{ 
+						angleMax = 40,
+						angleMin = 5,
+						color = { 0.878431, 0.698206, 0.384098, },
+						fadeOutStart = 1200,
+						fromTime = 20,
+						invertMask = true,
+						lightId = "",
+						mask = 0,
+						meshId = "",
+						mode = "LIGHT",
+						radius = 10,
+						strength = 2,
+						toTime = 6,
+						transf = { 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 7.5, 1, },
+						type = "SPOT",
+						visibleFrom = -1,
+						visibleTo = 2000,
+					},
+				},
+			},
+		},
+		version = 2,
+	}
+end

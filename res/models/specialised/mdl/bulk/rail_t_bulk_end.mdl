@@ -1,0 +1,67 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 8.12, 2.44376, 14.5971, },
+			bbMin = { 1.6671, -2.44377, 1.1, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 3.22645, 2.44376, 6.74856, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_unique.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_end_lod0.msh",
+							name = "rail_t_bulk_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 214.717,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_unique.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_end_lod1.msh",
+							name = "rail_t_bulk_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 214.717,
+				visibleTo = 644.151,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "::/stations/shared/cargo_addons/bulk/mat/bulk_trim.mtl", "::/stations/shared/cargo_addons/bulk/mat/bulk_floor.mtl", },
+							mesh = "msh/rail_t_bulk_end_lod2.msh",
+							name = "rail_t_bulk_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 644.151,
+				visibleTo = 1932.45,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

@@ -1,0 +1,67 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 38.33, 4.1532, 6.203, },
+			bbMin = { 33.8314, -4.15319, 1.1, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 2.2493, 4.1532, 2.5515, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_start_lod0.msh",
+							name = "rail_t_liquids_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 150.368,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_start_lod1.msh",
+							name = "rail_t_liquids_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 150.368,
+				visibleTo = 451.103,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_start_lod2.msh",
+							name = "rail_t_liquids_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 451.103,
+				visibleTo = 1353.31,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

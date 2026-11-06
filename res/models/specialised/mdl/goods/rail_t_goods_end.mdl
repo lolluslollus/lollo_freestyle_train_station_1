@@ -1,0 +1,160 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 20.0002, 5.13696, 7.24013, },
+			bbMin = { -0.129997, -5.13696, 1.1, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 10.0651, 5.13696, 3.07006, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 9.93512, 0, 4.17006, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							children = {
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass1_lod0.msh",
+									name = "rail_t_goods_end_glass1",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass2_lod0.msh",
+									name = "rail_t_goods_end_glass2",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 11, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass3_lod0.msh",
+									name = "rail_t_goods_end_glass3",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass4_lod0.msh",
+									name = "rail_t_goods_end_glass4",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.85, 1, 6.6077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass5_lod0.msh",
+									name = "rail_t_goods_end_glass5",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.85, -1, 6.6077, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass6_lod0.msh",
+									name = "rail_t_goods_end_glass6",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass7_lod0.msh",
+									name = "rail_t_goods_end_glass7",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 11, -1.95, 6.445, 1, },
+								},
+								{ 
+									materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass.mtl", },
+									mesh = "msh/rail_t_goods_end_glass8_lod0.msh",
+									name = "rail_t_goods_end_glass8",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, -1.95, 6.445, 1, },
+								},
+							},
+							name = "rail_t_goods_end_glass_grp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_goods_end_markings_lod0.msh",
+							name = "rail_t_goods_end_markings",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof02.mtl", },
+							mesh = "msh/rail_t_goods_end_lod0.msh",
+							name = "rail_t_goods_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 308.982,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_glass_lod.mtl", },
+							mesh = "msh/rail_t_goods_end_glass1_lod1.msh",
+							name = "rail_t_goods_end_glass1",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 17, 1.95, 6.445, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_end_lod1.msh",
+							name = "rail_t_goods_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 308.982,
+				visibleTo = 926.945,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_tile02.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_roof01.mtl", },
+							mesh = "msh/rail_t_goods_end_lod2.msh",
+							name = "rail_t_goods_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 926.945,
+				visibleTo = 2500,
+			},
+		},
+		metadata = { 
+			lightSourceList = { 
+				lights = {
+					{ 
+						angleMax = 70,
+						angleMin = 30,
+						color = { 1, 0.737222, 0.266667, },
+						fadeOutStart = 2000,
+						fromTime = 20,
+						height = 2,
+						invertMask = true,
+						length = 11,
+						lightId = "",
+						mask = 0,
+						meshId = "",
+						mode = "LIGHT",
+						radius = 12,
+						strength = 1,
+						toTime = 6,
+						transf = { 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 10.7, 0, 5, 1, },
+						type = "CHEAP_CYLINDRICAL",
+						visibleFrom = -1,
+						visibleTo = 2500,
+						width = 20,
+					},
+				},
+			},
+		},
+		version = 2,
+	}
+end

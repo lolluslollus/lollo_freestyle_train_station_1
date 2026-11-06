@@ -1,0 +1,125 @@
+function data()
+return {
+		matConfigs = {
+			{
+				0, 0, 0, 0,
+			},
+		},
+		subMeshes = {
+			{ 
+				indices = { 
+					normal = { 
+						count = 192,
+						offset = 8616,
+					},
+					position = { 
+						count = 192,
+						offset = 8232,
+					},
+					tangent = { 
+						count = 192,
+						offset = 8808,
+					},
+					uv0 = { 
+						count = 192,
+						offset = 8424,
+					},
+				},
+				materials = {
+					"one.mtl", 
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 48,
+						offset = 9096,
+					},
+					position = { 
+						count = 48,
+						offset = 9000,
+					},
+					tangent = { 
+						count = 48,
+						offset = 9144,
+					},
+					uv0 = { 
+						count = 48,
+						offset = 9048,
+					},
+				},
+				materials = {
+					"two.mtl", 
+				},				
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 1272,
+						offset = 11736,
+					},
+					position = { 
+						count = 1272,
+						offset = 9192,
+					},
+					tangent = { 
+						count = 1272,
+						offset = 13008,
+					},
+					uv0 = { 
+						count = 1272,
+						offset = 10464,
+					},
+				},
+				materials = {
+					"three.mtl", 
+				},				
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 192,
+						offset = 14664,
+					},
+					position = { 
+						count = 192,
+						offset = 14280,
+					},
+					tangent = { 
+						count = 192,
+						offset = 14856,
+					},
+					uv0 = { 
+						count = 192,
+						offset = 14472,
+					},
+				},
+				materials = {
+					"four.mtl", 
+				},				
+			},
+		},
+		vertexAttr = { 
+			normal = { 
+				count = 672,
+				numComp = 3,
+				offset = 4104,
+			},
+			position = { 
+				count = 2376,
+				numComp = 3,
+				offset = 0,
+			},
+			tangent = { 
+				count = 3456,
+				numComp = 4,
+				offset = 4776,
+			},
+			uv0 = { 
+				count = 1728,
+				numComp = 2,
+				offset = 2376,
+			},
+		},
+	}
+end

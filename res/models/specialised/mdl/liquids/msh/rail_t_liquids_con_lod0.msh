@@ -1,0 +1,129 @@
+function data()
+return { 
+		subMeshes = {
+			{ 
+				indices = { 
+					normal = { 
+						count = 480,
+						offset = 774576,
+					},
+					position = { 
+						count = 480,
+						offset = 773616,
+					},
+					tangent = { 
+						count = 480,
+						offset = 775056,
+					},
+					uv0 = { 
+						count = 480,
+						offset = 774096,
+					},
+					uv1 = { 
+						count = 480,
+						offset = 775536,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 336,
+						offset = 776688,
+					},
+					position = { 
+						count = 336,
+						offset = 776016,
+					},
+					tangent = { 
+						count = 336,
+						offset = 777024,
+					},
+					uv0 = { 
+						count = 336,
+						offset = 776352,
+					},
+					uv1 = { 
+						count = 336,
+						offset = 777360,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 15600,
+						offset = 808896,
+					},
+					position = { 
+						count = 15600,
+						offset = 777696,
+					},
+					tangent = { 
+						count = 15600,
+						offset = 824496,
+					},
+					uv0 = { 
+						count = 15600,
+						offset = 793296,
+					},
+					uv1 = { 
+						count = 15600,
+						offset = 840096,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 153576,
+						offset = 1162848,
+					},
+					position = { 
+						count = 153576,
+						offset = 855696,
+					},
+					tangent = { 
+						count = 153576,
+						offset = 1316424,
+					},
+					uv0 = { 
+						count = 153576,
+						offset = 1009272,
+					},
+					uv1 = { 
+						count = 153576,
+						offset = 1470000,
+					},
+				},
+			},
+		},
+		vertexAttr = { 
+			normal = { 
+				count = 30384,
+				numComp = 3,
+				offset = 277056,
+			},
+			position = { 
+				count = 126144,
+				numComp = 3,
+				offset = 0,
+			},
+			tangent = { 
+				count = 382080,
+				numComp = 4,
+				offset = 307440,
+			},
+			uv0 = { 
+				count = 150912,
+				numComp = 2,
+				offset = 126144,
+			},
+			uv1 = { 
+				count = 84096,
+				numComp = 2,
+				offset = 689520,
+			},
+		},
+	}
+end

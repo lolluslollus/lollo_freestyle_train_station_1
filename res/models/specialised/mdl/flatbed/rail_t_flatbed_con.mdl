@@ -1,0 +1,91 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 19.9996, 5.00169, 4.4328, },
+			bbMin = { -20, -5.00169, 1.02053, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 19.9998, 5.00169, 1.70614, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/assets/industries/decals/street_markings_yellow.mtl", },
+							mesh = "msh/rail_t_flatbed_markings_con_lod0.msh",
+							name = "rail_t_flatbed_markings_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_trim01.mtl", "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter_roof.mtl", "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter.mtl", },
+							mesh = "msh/rail_t_flatbed_buildings_con_lod0.msh",
+							name = "rail_t_flatbed_buildings_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_con_lod0.msh",
+							name = "rail_t_flatbed_rail_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 407.684,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/rail_t_goods_details.mtl", "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter_roof.mtl", "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter.mtl", },
+							mesh = "msh/rail_t_flatbed_buildings_con_lod1.msh",
+							name = "rail_t_flatbed_buildings_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_con_lod1.msh",
+							name = "rail_t_flatbed_rail_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 407.684,
+				visibleTo = 1223.05,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter_roof.mtl", "/stations/shared/cargo_addons/stake/mat/rail_t_stake_shelter.mtl", },
+							mesh = "msh/rail_t_flatbed_buildings_con_lod2.msh",
+							name = "rail_t_flatbed_buildings_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+						{ 
+							materials = { "/stations/shared/cargo_addons/goods/mat/road_t_goods_crane.mtl", },
+							mesh = "msh/rail_t_flatbed_rail_con_lod2.msh",
+							name = "rail_t_flatbed_rail_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 1223.05,
+				visibleTo = 3669.16,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end

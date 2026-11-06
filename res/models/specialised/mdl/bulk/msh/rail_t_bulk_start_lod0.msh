@@ -1,0 +1,128 @@
+function data()
+return { 
+		subMeshes = {
+			{ 
+				indices = { 
+					normal = { 
+						count = 24360,
+						offset = 220068,
+					},
+					position = { 
+						count = 24360,
+						offset = 171348,
+					},
+					tangent = { 
+						count = 24360,
+						offset = 244428,
+					},
+					uv0 = { 
+						count = 24360,
+						offset = 195708,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 288,
+						offset = 269364,
+					},
+					position = { 
+						count = 288,
+						offset = 268788,
+					},
+					tangent = { 
+						count = 288,
+						offset = 269652,
+					},
+					uv0 = { 
+						count = 288,
+						offset = 269076,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 576,
+						offset = 271092,
+					},
+					position = { 
+						count = 576,
+						offset = 269940,
+					},
+					tangent = { 
+						count = 576,
+						offset = 271668,
+					},
+					uv0 = { 
+						count = 576,
+						offset = 270516,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 240,
+						offset = 272724,
+					},
+					position = { 
+						count = 240,
+						offset = 272244,
+					},
+					tangent = { 
+						count = 240,
+						offset = 272964,
+					},
+					uv0 = { 
+						count = 240,
+						offset = 272484,
+					},
+				},
+			},
+			{ 
+				indices = { 
+					normal = { 
+						count = 14544,
+						offset = 302292,
+					},
+					position = { 
+						count = 14544,
+						offset = 273204,
+					},
+					tangent = { 
+						count = 14544,
+						offset = 316836,
+					},
+					uv0 = { 
+						count = 14544,
+						offset = 287748,
+					},
+				},
+			},
+		},
+		vertexAttr = { 
+			normal = { 
+				count = 10332,
+				numComp = 3,
+				offset = 68152,
+			},
+			position = { 
+				count = 34800,
+				numComp = 3,
+				offset = 0,
+			},
+			tangent = { 
+				count = 92864,
+				numComp = 4,
+				offset = 78484,
+			},
+			uv0 = { 
+				count = 33352,
+				numComp = 2,
+				offset = 34800,
+			},
+		},
+	}
+end

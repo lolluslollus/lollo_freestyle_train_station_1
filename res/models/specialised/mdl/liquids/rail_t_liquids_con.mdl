@@ -1,0 +1,67 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 7.53723, 4.15505, 8.90469, },
+			bbMin = { -7.53723, -4.15136, 0.75301, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 7.53723, 4.1532, 4.07584, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_cabin.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_con_lod0.msh",
+							name = "rail_t_liquids_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 253.471,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_cabin.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_con_lod1.msh",
+							name = "rail_t_liquids_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 253.471,
+				visibleTo = 760.413,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "/stations/shared/cargo_addons/liquids/mat/liquids_cabin.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_grid.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_trim.mtl", "/stations/shared/cargo_addons/liquids/mat/liquids_main.mtl", },
+							mesh = "msh/rail_t_liquids_con_lod2.msh",
+							name = "rail_t_liquids_con",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.3, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 760.413,
+				visibleTo = 2281.24,
+			},
+		},
+		metadata = { },
+		version = 2,
+	}
+end
