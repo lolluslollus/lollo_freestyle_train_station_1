@@ -14,7 +14,7 @@ return {
 				},
 				position = {
 					count = 96,
-					offset = 980,
+					offset = 1172,
 				},
 				tangent = {
 					count = 96,
@@ -22,7 +22,7 @@ return {
 				},
 				uv0 = {
 					count = 96,
-					offset = 1172,
+					offset = 980,
 				},
 			},
 			materials = {
@@ -37,7 +37,7 @@ return {
 				},
 				position = {
 					count = 192,
-					offset = 1364,
+					offset = 1748,
 				},
 				tangent = {
 					count = 192,
@@ -45,7 +45,7 @@ return {
 				},
 				uv0 = {
 					count = 192,
-					offset = 1748,
+					offset = 1364,
 				},
 			},
 			materials = {
@@ -60,7 +60,7 @@ return {
 				},
 				position = {
 					count = 48,
-					offset = 2132,
+					offset = 2228,
 				},
 				tangent = {
 					count = 48,
@@ -68,7 +68,7 @@ return {
 				},
 				uv0 = {
 					count = 48,
-					offset = 2228,
+					offset = 2132,
 				},
 			},
 			materials = {
@@ -83,7 +83,7 @@ return {
 				},
 				position = {
 					count = 96,
-					offset = 2324,
+					offset = 2516,
 				},
 				tangent = {
 					count = 96,
@@ -91,7 +91,7 @@ return {
 				},
 				uv0 = {
 					count = 96,
-					offset = 2516,
+					offset = 2324,
 				},
 			},
 			materials = {
@@ -108,17 +108,17 @@ return {
 		position = {
 			count = 288,
 			numComp = 3,
-			offset = 0,
+			offset = 536,
 		},
 		tangent = {
 			count = 176,
 			numComp = 4,
-			offset = 288,
+			offset = 360,
 		},
 		uv0 = {
 			count = 360,
 			numComp = 2,
-			offset = 464,
+			offset = 0,
 		},
 	},
 }
