@@ -12,6 +12,7 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_white.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/black_transparent.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/open_lifts/era_c_open-lift-free-body.msh',
@@ -31,9 +32,8 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_white.mtl',
-                                'lollo_freestyle_train_station/black_transparent.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/open_lifts/era_c_open-lift-free-body.msh',
+                            mesh = 'lollo_freestyle_train_station/open_lifts/era_c_open-lift-free-body-lod1.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         }
                     },
