@@ -12,7 +12,6 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_white.mtl',
-                                'lollo_freestyle_train_station/wall_grey.mtl',
                                 "lollo_freestyle_train_station/metal/rough_iron.mtl",
                                 'lollo_freestyle_train_station/black_transparent.mtl',
                             },
