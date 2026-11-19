@@ -9,20 +9,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 204,
-					offset = 3444,
+					count = 192,
+					offset = 3560,
 				},
 				position = {
-					count = 204,
-					offset = 3648,
+					count = 192,
+					offset = 2984,
 				},
 				tangent = {
-					count = 204,
-					offset = 3240,
+					count = 192,
+					offset = 3368,
 				},
 				uv0 = {
-					count = 204,
-					offset = 3036,
+					count = 192,
+					offset = 3176,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 4044,
+					offset = 4040,
 				},
 				position = {
 					count = 96,
-					offset = 4140,
+					offset = 3752,
 				},
 				tangent = {
 					count = 96,
-					offset = 3948,
+					offset = 3944,
 				},
 				uv0 = {
 					count = 96,
-					offset = 3852,
+					offset = 3848,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 576,
-					offset = 5388,
+					offset = 5864,
 				},
 				position = {
 					count = 576,
-					offset = 5964,
+					offset = 4136,
 				},
 				tangent = {
 					count = 576,
-					offset = 4812,
+					offset = 5288,
 				},
 				uv0 = {
 					count = 576,
-					offset = 4236,
+					offset = 4712,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 192,
-					offset = 6924,
+					offset = 7016,
 				},
 				position = {
 					count = 192,
-					offset = 7116,
+					offset = 6440,
 				},
 				tangent = {
 					count = 192,
-					offset = 6732,
+					offset = 6824,
 				},
 				uv0 = {
 					count = 192,
-					offset = 6540,
+					offset = 6632,
 				},
 			},
 			materials = {
@@ -103,22 +103,22 @@ return {
 		normal = {
 			count = 480,
 			numComp = 3,
-			offset = 1440,
+			offset = 2504,
 		},
 		position = {
-			count = 1116,
+			count = 1104,
 			numComp = 3,
-			offset = 1920,
+			offset = 0,
 		},
 		tangent = {
 			count = 720,
 			numComp = 4,
-			offset = 720,
+			offset = 1784,
 		},
 		uv0 = {
-			count = 720,
+			count = 680,
 			numComp = 2,
-			offset = 0,
+			offset = 1104,
 		},
 	},
 }
